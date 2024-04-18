@@ -1,0 +1,91 @@
+#include <linux/init.h>
+#include <linux/module.h>
+#include <linux/kernel.h>
+#include <linux/list.h>
+#include <linux/slab.h>
+struct birthday {
+int day;
+int month;
+int year;
+struct list_head list;
+};
+static LIST_HEAD(birthday_list);
+int __init birthday_module_init(void) {
+struct birthday *person;
+// Create and add five struct birthday elements to the linked list
+person = kmalloc(sizeof(*person), GFP_KERNEL);
+if (!person) {
+printk(KERN_ERR "Failed to allocate memory for struct
+birthday\n");
+return -ENOMEM;
+}
+person->day = 15;
+person->month = 6;
+person->year = 1990;
+INIT_LIST_HEAD(&person->list);
+list_add_tail(&person->list, &birthday_list);
+person = kmalloc(sizeof(*person), GFP_KERNEL);
+if (!person) {
+printk(KERN_ERR "Failed to allocate memory for struct
+birthday\n");
+return -ENOMEM;
+}
+person->day = 8;
+person->month = 4;
+person->year = 1985;
+INIT_LIST_HEAD(&person->list);
+list_add_tail(&person->list, &birthday_list);
+person = kmalloc(sizeof(*person), GFP_KERNEL);
+if (!person) {
+printk(KERN_ERR "Failed to allocate memory for struct
+birthday\n");
+return -ENOMEM;
+}
+person->day = 21;
+person->month = 11;
+person->year = 1993;
+INIT_LIST_HEAD(&person->list);
+list_add_tail(&person->list, &birthday_list);
+person = kmalloc(sizeof(*person), GFP_KERNEL);
+if (!person) {
+printk(KERN_ERR "Failed to allocate memory for struct
+birthday\n");
+return -ENOMEM;
+}
+person->day = 3;
+person->month = 9;
+person->year = 1988;
+INIT_LIST_HEAD(&person->list);
+list_add_tail(&person->list, &birthday_list);
+person = kmalloc(sizeof(*person), GFP_KERNEL);
+if (!person) {
+printk(KERN_ERR "Failed to allocate memory for struct
+birthday\n");
+return -ENOMEM;
+}
+person->day = 12;
+person->month = 12;
+person->year = 1995;
+INIT_LIST_HEAD(&person->list);
+list_add_tail(&person->list, &birthday_list);
+// Traverse the linked list and output its contents to the kernel log
+buffer
+struct birthday *ptr;
+printk(KERN_INFO "Birthday List:\n");
+list_for_each_entry(ptr, &birthday_list, list) {
+printk(KERN_INFO "Day: %d, Month: %d, Year: %d\n", ptr->day, ptr-
+>month, ptr->year);
+}
+return 0;
+}
+void __exit birthday_module_exit(void) {
+struct birthday *ptr, *next;
+// Remove elements from the linked list and free memory
+list_for_each_entry_safe(ptr, next, &birthday_list, list) {
+list_del(&ptr->list);
+kfree(ptr);
+}
+printk(KERN_INFO "Birthday Module: Exiting\n");
+}
+module_init(birthday_module_init);
+module_exit(birthday_module_exit);
